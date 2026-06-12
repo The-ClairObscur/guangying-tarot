@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="光隐 Tarot —— 在光与影的交界处，翻开属于你的那一张牌。Lumen et Umbra Tarot — where light meets shadow, your card awaits.">
+<meta name="keywords" content="塔罗,塔罗占卜,塔罗牌,光隐,光隐Tarot,韦特塔罗,荣格心理学,在线占卜">
+<meta property="og:title" content="光隐 Tarot — 探索命运的奥秘">
+<meta property="og:description" content="在光与影的交界处，翻开属于你的那一张牌。">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="zh_CN">
+<title>光隐 Tarot — 探索命运的奥秘</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Noto+Serif+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; font-size: clamp(15px, 1.2vw, 18px); }
+html, body {
+  margin: 0; padding: 0;
+}
+body {
+  font-family: 'Noto Serif SC', 'Cormorant Garamond', Georgia, serif;
+  background: #0a0810;
+  color: #d4cdc0;
+  line-height: 1.75;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== STARFIELD CANVAS ===== */
+#starfield {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  pointer-events: none; z-index: 0; display: block;
+}
+
+/* ===== MAIN WRAPPER ===== */
+.wrapper { position: relative; z-index: 1; }
+
+/* ===== NAV ===== */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 1.2rem clamp(1rem, 5vw, 4rem);
+  display: flex; justify-content: space-between; align-items: center;
+  transition: background 0.5s ease, backdrop-filter 0.5s ease;
+}
+nav.scrolled {
+  background: rgba(10, 8, 16, 0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(180, 150, 100, 0.12);
+}
+.nav-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.55rem; font-weight: 600; letter-spacing: 0.08em;
+  color: #d4b870;
+  text-shadow: 0 0 10px rgba(201,169,96,0.2);
+}
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a {
+  color: #b8a890; text-decoration: none; font-size: 0.82rem;
+  letter-spacing: 0.06em; transition: color 0.3s;
+}
+.nav-links a:hover { color: #c9a960; }
+.nav-cta {
+  padding: 0.4rem 1.2rem; border: 1px solid rgba(213,184,112,0.55);
+  color: #d4b870 !important; border-radius: 2px;
+  text-shadow: 0 0 4px rgba(201,169,96,0.2);
+}
+.nav-cta:hover { background: rgba(201, 169, 96, 0.1); }
+
+/* ===== SECTION BASE ===== */
+section { padding: 6rem clamp(1rem, 8vw, 6rem); position: relative; }
+
+.section-label {
+  font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+  color: #d4b870; margin-bottom: 1rem;
+  text-shadow: 0 0 6px rgba(201,169,96,0.4), 0 0 14px rgba(201,169,96,0.12);
+}
+
+/* ===== HERO ===== */
+.hero {
+  min-height: 100vh; display: flex; align-items: center;
+  padding-top: 5rem;
+}
+.hero-content { max-width: 800px; }
+.hero-symbol {
+  font-size: 3.5rem; color: #d4b870; margin-bottom: 1.5rem;
+  text-shadow: 0 0 14px rgba(201,169,96,0.25);
+}
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.8rem, 7vw, 5.5rem); font-weight: 300;
+  line-height: 1.1; color: #e8dcc8; letter-spacing: 0.03em;
+}
+.hero h1 em { font-style: italic; color: #c9a960; }
+.hero .subtitle {
+  font-size: clamp(1rem, 1.8vw, 1.25rem);
+  color: #a09080; margin-top: 1.5rem; max-width: 520px; letter-spacing: 0.04em;
+}
+.hero-cta {
+  display: inline-block; margin-top: 2.5rem;
+  padding: 0.85rem 2.2rem;
+  font-size: 0.85rem; letter-spacing: 0.15em;
+  color: #0a0810; background: #c9a960; border: none;
+  text-decoration: none; cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+.hero-cta:hover { background: #dbbe6e; transform: translateY(-2px); }
+
+.hero-decor {
+  position: absolute; right: 5%; top: 50%; transform: translateY(-50%);
+  opacity: 0.06; pointer-events: none;
+}
+.hero-decor .moon {
+  width: clamp(180px, 25vw, 320px); height: clamp(180px, 25vw, 320px);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #e8dcc8 0%, #8a7a60 40%, transparent 70%);
+  box-shadow: 0 0 120px rgba(201, 169, 96, 0.15);
+}
+.hero-decor .stars-group {
+  position: absolute; top: -10%; left: 60%; display: flex; gap: 1rem;
+}
+.hero-decor .star-dot {
+  width: 4px; height: 4px; border-radius: 50%; background: #c9a960;
+  animation: twinkle 2s infinite alternate;
+}
+.star-dot:nth-child(2) { animation-delay: 0.6s; width: 3px; height: 3px; }
+.star-dot:nth-child(3) { animation-delay: 1.3s; width: 2px; height: 2px; }
+.star-dot:nth-child(4) { animation-delay: 0.3s; width: 5px; height: 5px; }
+
+@keyframes twinkle {
+  0% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+/* ===== ABOUT ===== */
+.about-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+}
+.about-image-placeholder {
+  aspect-ratio: 3/4; max-width: 340px; position: relative;
+}
+.about-frame {
+  width: 100%; height: 100%; border: 1px solid rgba(201,169,96,0.35);
+  overflow: hidden; position: relative;
+}
+.about-frame::after {
+  content: ''; position: absolute; inset: 0;
+  box-shadow: inset 0 0 60px rgba(10,8,16,0.5);
+  pointer-events: none;
+}
+.about-avatar {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.about-text h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 400;
+  color: #e8dcc8; margin-bottom: 1.5rem;
+}
+.about-text p { color: #a09080; margin-bottom: 1rem; font-size: 0.95rem; max-width: 480px; }
+.about-text .highlight { color: #c9a960; font-style: italic; }
+
+/* ===== SERVICES ===== */
+.services-header { margin-bottom: 4rem; }
+.services-header h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 400;
+  color: #e8dcc8;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1px;
+  border: 1px solid rgba(201,169,96,0.15);
+  border-width: 1px 0 0 1px;
+}
+.service-card {
+  padding: 2.5rem 2rem;
+  border: 1px solid rgba(201,169,96,0.15);
+  border-width: 0 1px 1px 0;
+  transition: background 0.4s, transform 0.4s;
+  position: relative; overflow: hidden; cursor: pointer;
+}
+.service-card::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 0;
+  background: #c9a960; transition: height 0.5s ease;
+}
+.service-card:hover { background: rgba(201,169,96,0.03); transform: translateY(-4px); }
+.service-card:hover::before { height: 100%; }
+.service-card .card-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem; color: rgba(213,184,112,0.12); font-weight: 300;
+  position: absolute; top: 1rem; right: 1.5rem;
+}
+.service-card h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem; font-weight: 500; color: #d4cdc0; margin-bottom: 0.6rem;
+}
+.service-card .price {
+  font-size: 1.3rem; color: #d4b870; font-weight: 500; margin: 1rem 0 0.8rem;
+  text-shadow: 0 0 4px rgba(201,169,96,0.2);
+}
+.service-card .desc { font-size: 0.82rem; color: #8a7a68; line-height: 1.6; }
+.service-card .tag {
+  display: inline-block; font-size: 0.65rem; letter-spacing: 0.12em;
+  padding: 0.2rem 0.7rem; border: 1px solid rgba(213,184,112,0.4);
+  color: #d4b870; margin-top: 0.8rem; text-transform: uppercase;
+  text-shadow: 0 0 4px rgba(201,169,96,0.35);
+}
+.service-card .select-btn {
+  display: inline-block; margin-top: 1.2rem;
+  padding: 0.5rem 1.4rem;
+  font-size: 0.75rem; letter-spacing: 0.1em;
+  color: #d4b870; border: 1px solid rgba(213,184,112,0.55); background: transparent;
+  cursor: pointer; transition: all 0.3s;
+  text-shadow: 0 0 4px rgba(201,169,96,0.25);
+}
+.service-card .select-btn:hover {
+  background: #c9a960; color: #0a0810;
+}
+
+/* ===== SELECTED INDICATOR ON SERVICE CARD ===== */
+.service-card.selected {
+  border-color: #c9a960;
+  background: rgba(201,169,96,0.05);
+  box-shadow: inset 0 0 0 1px #c9a960;
+}
+.service-card.selected::before { height: 100%; }
+.service-card.selected .select-btn {
+  background: #c9a960; color: #0a0810;
+}
+
+/* ===== BOOKING ===== */
+.booking-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start;
+}
+.booking-info h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 400;
+  color: #e8dcc8; margin-bottom: 1.5rem;
+}
+
+/* ===== SELECTED SUMMARY (Apple-style) ===== */
+.selected-summary {
+  background: rgba(20, 16, 28, 0.6);
+  border: 1px solid rgba(201,169,96,0.2);
+  padding: 1.5rem; margin-bottom: 1.5rem;
+}
+.selected-summary .summary-header {
+  font-size: 0.68rem; letter-spacing: 0.2em; color: #8a7a68; text-transform: uppercase;
+  margin-bottom: 0.8rem;
+}
+.selected-summary .summary-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.5rem 0; border-bottom: 1px solid rgba(201,169,96,0.06);
+}
+.selected-summary .summary-row:last-child { border: none; }
+.selected-summary .summary-label { font-size: 0.82rem; color: #a09080; }
+.selected-summary .summary-value { font-size: 0.85rem; color: #d4cdc0; }
+.selected-summary .summary-price { color: #d4b870; font-weight: 500; text-shadow: 0 0 4px rgba(201,169,96,0.2); }
+
+.selected-summary .summary-placeholder {
+  color: #5a5040; font-size: 0.82rem; font-style: italic;
+}
+
+.booking-form { display: flex; flex-direction: column; gap: 1.2rem; }
+.booking-form input,
+.booking-form textarea {
+  width: 100%; padding: 0.8rem 1rem;
+  background: rgba(20, 16, 28, 0.8);
+  border: 1px solid rgba(201,169,96,0.2);
+  color: #d4cdc0; font-family: inherit; font-size: 0.85rem;
+  transition: border-color 0.3s; outline: none;
+}
+.booking-form input:focus,
+.booking-form textarea:focus { border-color: #c9a960; }
+.booking-form textarea { resize: vertical; min-height: 100px; }
+.booking-form button {
+  padding: 0.85rem 2rem;
+  background: #c9a960; color: #0a0810; border: none;
+  font-family: inherit; font-size: 0.85rem; letter-spacing: 0.12em;
+  cursor: pointer; transition: background 0.3s;
+  align-self: flex-start;
+}
+.booking-form button:hover { background: #dbbe6e; }
+
+/* ===== TESTIMONIALS ===== */
+.testimonial-wrap { overflow: hidden; }
+.testimonials h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 400;
+  color: #e8dcc8; margin-bottom: 2rem;
+}
+
+.testimonial-track {
+  display: flex; gap: 2rem;
+  animation: scroll-testimonials 32s linear infinite;
+  width: max-content;
+}
+.testimonial-track:hover { animation-play-state: paused; }
+
+@keyframes scroll-testimonials {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.testimonial-card {
+  min-width: 300px; max-width: 360px;
+  padding: 2rem;
+  border: 1px solid rgba(201,169,96,0.12);
+  background: rgba(20, 16, 28, 0.7);
+  transition: border-color 0.3s;
+}
+.testimonial-card:hover { border-color: rgba(201,169,96,0.3); }
+.testimonial-card .stars { color: #d4b870; letter-spacing: 2px; margin-bottom: 1rem; text-shadow: 0 0 6px rgba(201,169,96,0.3); }
+.testimonial-card .quote {
+  font-size: 0.88rem; color: #b0a090; line-height: 1.8; font-style: italic;
+  position: relative; padding-left: 1.2rem;
+}
+.testimonial-card .quote::before {
+  content: '"'; position: absolute; left: 0; top: -0.3rem;
+  font-size: 2rem; color: rgba(201,169,96,0.2);
+  font-family: 'Cormorant Garamond', serif;
+}
+.testimonial-card .author {
+  margin-top: 1.2rem; font-size: 0.75rem; color: #8a7a68; letter-spacing: 0.06em;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  text-align: center; padding: 3rem 2rem 2rem;
+  border-top: 1px solid rgba(201,169,96,0.08);
+}
+footer .footer-symbols {
+  font-size: 1.5rem; letter-spacing: 0.5rem; color: #d4b870;
+  text-shadow: 0 0 10px rgba(201,169,96,0.25);
+  margin-bottom: 1rem;
+}
+footer p { font-size: 0.7rem; color: #5a5040; letter-spacing: 0.1em; }
+
+/* ===== FLOATING ORNAMENTS ===== */
+.ornament { position: absolute; pointer-events: none; opacity: 0.04; }
+.ornament-card {
+  width: 60px; height: 100px; border: 1px solid #c9a960;
+  transform: rotate(-12deg); border-radius: 4px;
+}
+.ornament-pentagram {
+  width: 40px; height: 40px;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  background: #c9a960;
+}
+
+/* ===== FORM SUCCESS ===== */
+.form-success {
+  display: none; text-align: center; padding: 2rem;
+  border: 1px solid rgba(201,169,96,0.25);
+}
+.form-success.visible { display: block; }
+.form-success p { color: #d4b870; font-size: 1rem; text-shadow: 0 0 6px rgba(201,169,96,0.25); }
+
+/* ===== SCROLL TO TOP ===== */
+.scroll-top {
+  position: fixed; bottom: 2rem; right: 2rem; z-index: 99;
+  width: 40px; height: 40px; border: 1px solid rgba(201,169,96,0.3);
+  background: rgba(10,8,16,0.7); backdrop-filter: blur(8px);
+  color: #c9a960; font-size: 1.2rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.4s, transform 0.4s;
+}
+.scroll-top.visible { opacity: 1; transform: translateY(0); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  html { font-size: clamp(14px, 1.5vw, 16px); }
+
+  /* Nav */
+  .nav-links { display: none; position: absolute; top: 100%; right: 1rem;
+    flex-direction: column; background: rgba(10,8,16,0.95);
+    backdrop-filter: blur(16px); border: 1px solid rgba(201,169,96,0.15);
+    padding: 1rem 1.5rem; gap: 1rem; border-radius: 4px; }
+  .nav-links.open { display: flex; }
+  .hamburger { display: flex; }
+  nav { padding: 0.8rem 1.2rem; }
+
+  /* Sections */
+  section { padding: 3.5rem 1.2rem; }
+
+  /* Snap */
+  html { scroll-snap-type: y proximity; scroll-behavior: auto; }
+  section { scroll-snap-align: start; }
+  footer { scroll-snap-align: start; }
+
+  /* Hero */
+  .hero { min-height: 100vh; padding-top: 4rem; }
+  .hero h1 { font-size: clamp(2rem, 8vw, 3rem); }
+  .hero .subtitle { font-size: 0.85rem; padding: 0 0.5rem; }
+
+  /* About */
+  .about-grid { grid-template-columns: 1fr; gap: 2rem; text-align: center; }
+  .about-image-placeholder { max-width: 200px; margin: 0 auto; }
+  .about-text p { margin: 0 auto; }
+
+  /* Services */
+  .services-grid { grid-template-columns: 1fr; max-width: 380px; margin: 0 auto; gap: 1.2rem; }
+  .service-card { padding: 1.5rem; }
+  .service-card .card-num { font-size: 2.2rem; }
+  .services-header h2 { font-size: 1.8rem; }
+  .section-label { margin-bottom: 0.5rem; }
+
+  /* Booking */
+  .booking-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .booking-form button { align-self: stretch; }
+  .selected-summary { max-width: 100%; }
+
+  /* Testimonials */
+  .testimonial-card { min-width: 260px; }
+  .testimonial-card .quote { font-size: 0.8rem; }
+
+  /* Hero decor */
+  .hero-decor { right: -15%; opacity: 0.02; }
+  .hero-decor .moon { width: 120px; height: 120px; }
+  .hero-decor .star { font-size: 1.5rem; }
+
+  /* Footer */
+  footer { padding: 2rem 1.2rem 1.5rem; }
+
+  /* Scroll top */
+  .scroll-top { bottom: 1.2rem; right: 1rem; width: 36px; height: 36px; font-size: 1rem; }
+}
+
+@media (max-width: 480px) {
+  section { padding: 3rem 1rem; }
+  .hero { min-height: 100vh; }
+  .hero h1 { font-size: clamp(1.7rem, 7vw, 2.2rem); }
+  .hero .subtitle { font-size: 0.78rem; line-height: 1.7; }
+  .hero-symbol { font-size: 2.5rem; }
+
+  .about-image-placeholder { max-width: 160px; }
+  .about-text h2 { font-size: 1.5rem; }
+
+  .services-header h2 { font-size: 1.5rem; }
+  .service-card h3 { font-size: 1.2rem; }
+  .service-card .price { font-size: 1.1rem; }
+  .service-card .select-btn { width: 100%; text-align: center; }
+
+  .booking-form input,
+  .booking-form textarea { font-size: 0.9rem; }
+  .booking-form button { padding: 0.75rem 1.5rem; font-size: 0.8rem; }
+
+  .testimonial-card { min-width: 230px; padding: 1rem 1.2rem; }
+  .testimonial-card .quote { font-size: 0.75rem; }
+  .testimonial-card .author { font-size: 0.7rem; }
+}
+
+/* ===== HAMBURGER ===== */
+.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer;
+  background: none; border: none; padding: 5px; z-index: 101; }
+.hamburger span { display: block; width: 22px; height: 1.5px;
+  background: #d4b870; transition: all 0.3s; }
+.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(4px, -4px); }
+
+/* ===== SCROLL REVEAL ===== */
+.reveal {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<canvas id="starfield"></canvas>
+<div class="wrapper">
+
+  <!-- NAV -->
+  <nav id="nav">
+    <div class="nav-brand">光隐 Tarot</div>
+    <button class="hamburger" id="hamburger" aria-label="菜单">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="#about">关于</a></li>
+      <li><a href="#services">服务</a></li>
+      <li><a href="#booking" class="nav-cta">预约咨询</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero reveal" id="hero">
+    <div class="hero-content">
+      <div class="hero-symbol">✧</div>
+      <h1>于光隐之处<br>触摸<em>命运</em>的脉络</h1>
+      <p class="subtitle">
+        每一张塔罗牌都是宇宙递来的一封信。翻开它，聆听灵魂深处的低语，
+        在混沌中寻找属于你的那束光。
+      </p>
+      <a href="#services" class="hero-cta">选择你的牌阵</a>
+    </div>
+    <div class="hero-decor">
+      <div class="moon"></div>
+      <div class="stars-group">
+        <div class="star-dot"></div><div class="star-dot"></div>
+        <div class="star-dot"></div><div class="star-dot"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="reveal">
+    <div class="section-label">· 关于我 ·</div>
+    <div class="about-grid">
+      <div class="about-image-placeholder">
+        <div class="about-frame">
+          <img class="about-avatar" src="avatar.jpg" alt="光隐" loading="lazy" width="340" height="453">
+        </div>
+      </div>
+      <div class="about-text">
+        <h2>我是光隐，你的塔罗引路人</h2>
+        <p>
+          十年前，一本泛黄的韦特塔罗牌将我引入神秘学之门。从自学解牌到师从欧洲资深塔罗导师，
+          从深夜独自研究符号学到为上千位来访者点亮心灯——
+        </p>
+        <p>
+          我的占卜风格融合了<span class="highlight">古典韦特体系</span>与<span class="highlight">荣格心理学</span>，
+          不只解读牌面，更帮助你看见潜意识中那些被忽略的答案。
+        </p>
+        <p>
+          每一场占卜，都是一次灵魂的双向奔赴。我不预测命运，我帮你<span class="highlight">看清自己</span>。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ORNAMENT -->
+  <div class="ornament" style="top:120%;left:8%;"><div class="ornament-card"></div></div>
+  <div class="ornament" style="top:150%;right:5%;"><div class="ornament-pentagram"></div></div>
+
+  <!-- SERVICES — 第一步：选择牌阵 -->
+  <section id="services" class="reveal">
+    <div class="section-label">· 第一步：选择牌阵 ·</div>
+    <div class="services-header">
+      <h2>选择适合你的占卜方式</h2>
+    </div>
+    <div class="services-grid">
+      <div class="service-card" data-name="三张牌阵" data-price="188" data-duration="30分钟">
+        <div class="card-num">I</div>
+        <h3>三张牌阵</h3>
+        <div class="price">¥188</div>
+        <p class="desc">过去、现在、未来。简洁而精准，适合单一问题快速洞察，是你与塔罗的第一次对话。</p>
+        <span class="tag">30分钟</span>
+        <div class="select-btn">选择此牌阵</div>
+      </div>
+      <div class="service-card" data-name="感情与事业" data-price="288" data-duration="45分钟">
+        <div class="card-num">II</div>
+        <h3>感情与事业</h3>
+        <div class="price">¥288</div>
+        <p class="desc">探索亲密关系的能量流动，聚焦职业与财富的发展方向。看清羁绊根源，发现隐藏机遇。</p>
+        <span class="tag">45分钟</span>
+        <div class="select-btn">选择此牌阵</div>
+      </div>
+      <div class="service-card" data-name="凯尔特十字牌阵" data-price="388" data-duration="60分钟">
+        <div class="card-num">III</div>
+        <h3>凯尔特十字牌阵</h3>
+        <div class="price">¥388</div>
+        <p class="desc">最经典的深层牌阵。十张牌全方位解析你当下的处境、挑战、潜意识与最终走向。</p>
+        <span class="tag">60分钟</span>
+        <div class="select-btn">选择此牌阵</div>
+      </div>
+      <div class="service-card" data-name="年度运势推演" data-price="588" data-duration="90分钟">
+        <div class="card-num">IV</div>
+        <h3>年度运势推演</h3>
+        <div class="price">¥588</div>
+        <p class="desc">13张牌对应全年12个月+年度主题，全面预览未来一年的关键节点与成长契机。</p>
+        <span class="tag">90分钟</span>
+        <div class="select-btn">选择此牌阵</div>
+      </div>
+      <div class="service-card" data-name="定制深度咨询" data-price="888" data-duration="120分钟">
+        <div class="card-num">V</div>
+        <h3>定制深度咨询</h3>
+        <div class="price">¥888</div>
+        <p class="desc">不限牌阵，针对复杂人生议题进行深层探索。包含后续一周的文字跟踪解读。</p>
+        <span class="tag">120分钟</span>
+        <div class="select-btn">选择此牌阵</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ORNAMENT -->
+  <div class="ornament" style="top:250%;right:12%;">
+    <div class="ornament-card" style="transform:rotate(18deg);"></div>
+  </div>
+
+  <!-- BOOKING — 第二步：填写信息 -->
+  <section id="booking" class="reveal">
+    <div class="section-label">· 第二步：完成预约 ·</div>
+    <div class="booking-grid">
+      <div class="booking-info">
+        <h2>确认信息，提交预约</h2>
+        <div class="selected-summary" id="selected-summary">
+          <div class="summary-header">已选服务</div>
+          <div class="summary-placeholder" id="summary-placeholder">
+            请在上方选择一个牌阵，下方会自动显示你的选择。
+          </div>
+          <div id="summary-detail" style="display:none;">
+            <div class="summary-row">
+              <span class="summary-label">牌阵类型</span>
+              <span class="summary-value" id="summary-name">—</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">时长</span>
+              <span class="summary-value" id="summary-duration">—</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">费用</span>
+              <span class="summary-price" id="summary-price">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <form class="booking-form" id="booking-form">
+          <input type="text" name="q1" placeholder="你的名字" required>
+          <input type="text" name="q2" placeholder="手机号/微信号（二选一）" required>
+          <input type="hidden" name="q3" id="hidden-spread" value="">
+          <textarea name="q4" placeholder="简单说说你想探索的问题（可选）"></textarea>
+          <button type="submit">提交预约</button>
+        </form>
+        <iframe name="wjx-hidden" id="wjx-hidden" style="display:none;"></iframe>
+        <div class="form-success" id="form-success">
+          <p>✦ 预约已收到 ✦</p>
+          <p style="font-size:0.85rem;color:#a09080;margin-top:0.5rem;">我会在24小时内与你取得联系。</p>
+        </div>
+      </div>
+    </div>
+    <!-- 评价嵌入预约区，填表时即可看到 -->
+    <div class="section-label" style="margin-top:3rem;">· 他们这样说 ·</div>
+    <div class="testimonial-wrap">
+    <div class="testimonial-track" id="testimonial-track">
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="quote">光隐老师的解读让我醍醐灌顶。她不只是告诉我牌面含义，而是引导我自己去看见那些我一直逃避的真相。那次凯尔特十字之后，我做出了人生最重要的决定。</p>
+        <p class="author">— 林小姐 · 北京</p>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="quote">抱着半信半疑的心态预约了一次感情占卜，结果说的全中。更可贵的是，她没有给我虚假的希望，而是温柔但诚实地告诉我需要面对的问题。</p>
+        <p class="author">— 陈女士 · 上海</p>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="quote">年度运势推演真的太值了！提前知道了几个关键时间节点，年中果然遇到了她说的转折点。因为早有心理准备，我处理得从容很多。</p>
+        <p class="author">— 张先生 · 深圳</p>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="quote">非常专业且有温度的占卜体验。光隐老师对每张牌的解读都充满洞见，荣格心理学的背景让她的分析特别有深度。已经推荐给三个朋友了。</p>
+        <p class="author">— 王小姐 · 杭州</p>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="quote">迷茫期无意中发现了光隐塔罗，第一次占卜就感受到了强烈的能量共鸣。她没有给我标准答案，而是帮助我在混乱中找到了属于自己的节奏。</p>
+        <p class="author">— 李女士 · 成都</p>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="quote">原本只是好奇试了一次三张牌阵，结果句句戳中。现在每季度都会来一次深度咨询，已经成了我的心灵加油站。</p>
+        <p class="author">— 赵女士 · 广州</p>
+      </div>
+      <!-- duplicated for seamless loop -->
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="quote">光隐老师的解读让我醍醐灌顶。她不只是告诉我牌面含义，而是引导我自己去看见那些我一直逃避的真相。那次凯尔特十字之后，我做出了人生最重要的决定。</p>
+        <p class="author">— 林小姐 · 北京</p>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="quote">抱着半信半疑的心态预约了一次感情占卜，结果说的全中。更可贵的是，她没有给我虚假的希望，而是温柔但诚实地告诉我需要面对的问题。</p>
+        <p class="author">— 陈女士 · 上海</p>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="quote">年度运势推演真的太值了！提前知道了几个关键时间节点，年中果然遇到了她说的转折点。因为早有心理准备，我处理得从容很多。</p>
+        <p class="author">— 张先生 · 深圳</p>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="quote">非常专业且有温度的占卜体验。光隐老师对每张牌的解读都充满洞见，荣格心理学的背景让她的分析特别有深度。已经推荐给三个朋友了。</p>
+        <p class="author">— 王小姐 · 杭州</p>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="quote">迷茫期无意中发现了光隐塔罗，第一次占卜就感受到了强烈的能量共鸣。她没有给我标准答案，而是帮助我在混乱中找到了属于自己的节奏。</p>
+        <p class="author">— 李女士 · 成都</p>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="quote">原本只是好奇试了一次三张牌阵，结果句句戳中。现在每季度都会来一次深度咨询，已经成了我的心灵加油站。</p>
+        <p class="author">— 赵女士 · 广州</p>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-symbols">☽ ✧ ☀ ✧ ☽</div>
+    <p>© 2026 光隐 Tarot · 命运在你手中</p>
+  </footer>
+
+</div>
+
+<!-- SCROLL TO TOP -->
+<div class="scroll-top" id="scroll-top">↑</div>
+
+<script>
+/* ===== STARFIELD ===== */
+const canvas = document.getElementById('starfield');
+const ctx = canvas.getContext('2d');
+let stars = [];
+let width, height;
+
+function resize() {
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+}
+resize();
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => { resize(); initStars(); }, 200);
+});
+
+function initStars() {
+  stars = [];
+  const count = Math.floor((width * height) / 1800);
+  for (let i = 0; i < count; i++) {
+    stars.push({
+      x: Math.random() * width, y: Math.random() * height,
+      r: Math.random() * 1.5 + 0.3,
+      twinkleSpeed: Math.random() * 0.015 + 0.005,
+      twinkleOffset: Math.random() * Math.PI * 2,
+      baseAlpha: Math.random() * 0.5 + 0.2,
+    });
+  }
+  for (let i = 0; i < 15; i++) {
+    stars.push({
+      x: Math.random() * width, y: Math.random() * height,
+      r: Math.random() * 1.2 + 1.2,
+      twinkleSpeed: Math.random() * 0.02 + 0.01,
+      twinkleOffset: Math.random() * Math.PI * 2,
+      baseAlpha: Math.random() * 0.3 + 0.4, bright: true,
+    });
+  }
+}
+initStars();
+
+function drawStars(time) {
+  ctx.clearRect(0, 0, width, height);
+  for (const s of stars) {
+    const alpha = s.baseAlpha + Math.sin(time * s.twinkleSpeed + s.twinkleOffset) * 0.3;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = s.bright
+      ? `rgba(201,169,96,${Math.max(0.15, alpha)})`
+      : `rgba(180,160,130,${Math.max(0.08, alpha)})`;
+    ctx.fill();
+    if (s.bright && alpha > 0.55) {
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r * 3, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(201,169,96,${alpha * 0.06})`;
+      ctx.fill();
+    }
+  }
+}
+requestAnimationFrame(function loop(time) { drawStars(time); requestAnimationFrame(loop); });
+
+/* ===== NAV SCROLL ===== */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+/* ===== SCROLL REVEAL ===== */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+/* ===== SERVICE SELECTION (Apple-style) ===== */
+const serviceCards = document.querySelectorAll('.service-card');
+const summaryPlaceholder = document.getElementById('summary-placeholder');
+const summaryDetail = document.getElementById('summary-detail');
+const summaryName = document.getElementById('summary-name');
+const summaryDuration = document.getElementById('summary-duration');
+const summaryPrice = document.getElementById('summary-price');
+
+let selectedService = null;
+
+serviceCards.forEach(card => {
+  const btn = card.querySelector('.select-btn');
+  btn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    // Remove previous selection
+    serviceCards.forEach(c => c.classList.remove('selected'));
+    // Set new selection
+    card.classList.add('selected');
+    selectedService = {
+      name: card.dataset.name,
+      price: card.dataset.price,
+      duration: card.dataset.duration,
+    };
+    // Update summary
+    summaryPlaceholder.style.display = 'none';
+    summaryDetail.style.display = 'block';
+    summaryName.textContent = selectedService.name;
+    summaryDuration.textContent = selectedService.duration;
+    summaryPrice.textContent = '¥' + selectedService.price;
+    // Update hidden spread field for Wenjuanxing
+    document.getElementById('hidden-spread').value = selectedService.name;
+    // Scroll to booking
+    document.getElementById('booking').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+/* ===== BOOKING FORM → 问卷星桥接 ===== */
+document.getElementById('booking-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  if (!selectedService) {
+    alert('请先在服务板块选择一个牌阵');
+    return;
+  }
+  // 动态创建独立表单 POST 到问卷星
+  var bridge = document.createElement('form');
+  bridge.method = 'POST';
+  bridge.action = 'https://www.wjx.cn/vm/eoND5Q3.aspx';
+  bridge.target = 'wjx-hidden';
+  var fields = this.querySelectorAll('input, textarea');
+  fields.forEach(function(f) {
+    var clone = document.createElement('input');
+    clone.type = 'hidden';
+    clone.name = f.name;
+    clone.value = f.value;
+    bridge.appendChild(clone);
+  });
+  document.body.appendChild(bridge);
+  bridge.submit();
+  document.body.removeChild(bridge);
+  // UI 反馈
+  this.style.display = 'none';
+  document.getElementById('form-success').classList.add('visible');
+});
+
+/* ===== SMOOTH SCROLL ===== */
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
+  });
+});
+
+/* ===== SCROLL TO TOP ===== */
+const scrollTopBtn = document.getElementById('scroll-top');
+window.addEventListener('scroll', () => {
+  scrollTopBtn.classList.toggle('visible', window.scrollY > 500);
+});
+scrollTopBtn.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+/* ===== HAMBURGER MENU ===== */
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.querySelector('.nav-links');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  navLinks.classList.toggle('open');
+});
+navLinks.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    hamburger.classList.remove('open');
+    navLinks.classList.remove('open');
+  });
+});
+</script>
+</body>
+</html>
